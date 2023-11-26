@@ -1,0 +1,111 @@
+// ... (imports)
+
+const AlunosForm = () => {
+    const [formValues, setFormValues] = useState({});
+
+    async function handleChange(value, field) {
+        try {
+            if (field === 'cep' && value.length === 8) {
+                const endereco = await getEndereco(value);
+                setFormValues({ ...formValues, ...endereco });
+            } else {
+                setFormValues({ ...formValues, [field]: value });
+            }
+        } catch (error) {
+            console.error('Error fetching address:', error);
+            // Handle error appropriately, e.g., show an error message to the user
+        }
+    }
+
+    async function getEndereco(cep) {
+        try {
+            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching address:', error);
+            throw error; // Rethrow the error to be caught by the handleChange function
+        }
+    }
+
+    function salvar(values) {
+        console.log(values);
+        // Add logic to send the form data to the server or perform other actions
+    }
+
+    return (
+        <ScrollView style={{ margin: 15 }}>
+            <Formik
+                initialValues={{ nome: '', email: '', modalidade: '', ...formValues }}
+                validationSchema={alunosValidator}
+                onSubmit={(values) => salvar(values)}
+            >
+                {({ values, handleChange, handleSubmit, errors, touched, setFieldValue }) => (
+                    <>
+                        <TextInput
+                            style={{ marginTop: 10 }}
+                            mode='outlined'
+                            label='CEP'
+                            value={values.cep}
+                            keyboardType='number-pad'
+                            onChangeText={(valor) => handleChange(valor, 'cep')}
+                        />
+
+                        {/* Other TextInput components for form fields */}
+
+                        <Button onPress={handleSubmit}>Salvar</Button>
+                    </>
+                )}
+            </Formik>
+        </ScrollView>
+    );
+};
+
+
+<TextInput
+style={{ marginTop: 10 }}
+mode='outlined'
+label='CEP'
+value={dados.cep}
+keyboardType='number-pad'
+onChangeText={(valor) => handleChange(valor, 'cep')}
+/>
+<Validacao errors={errors.cep} touched={touched.cep} />
+
+<TextInput
+style={{ marginTop: 10 }}
+mode='outlined'
+label='Logradouro'
+value={dados.logradouro}
+onChangeText={(valor) => handleChange(valor, 'logradouro')}
+/>
+<Validacao errors={errors.logradouro} touched={touched.logradouro} />
+
+<TextInput
+style={{ marginTop: 10 }}
+mode='outlined'
+label='Bairro'
+value={dados.bairro}
+onChangeText={(valor) => handleChange(valor, 'bairro')}
+/>
+<Validacao errors={errors.bairro} touched={touched.bairro} />
+
+<TextInput
+style={{ marginTop: 10 }}
+mode='outlined'
+label='Número'
+value={dados.numero}
+keyboardType='number-pad'
+onChangeText={(valor) => handleChange(valor, 'numero')}
+/>
+<Validacao errors={errors.numero} touched={touched.numero} />
+
+<TextInput
+style={{ marginTop: 10 }}
+mode='outlined'
+label='Complemento'
+value={dados.complemento}
+onChangeText={(valor) => handleChange(valor, 'complemento')}
+/>
+<Validacao errors={errors.complemento} touched={touched.complemento} />
+
+export default AlunosForm;
