@@ -55,7 +55,7 @@ const CursosForm = ({ navigation, route }) => {
           <View>
 
             <TextInput
-              style={{ marginTop: 10 }}
+              style={{ marginTop: 10,  }}
               mode='outlined'
               label='Nome'
               value={values.nome}
@@ -64,7 +64,7 @@ const CursosForm = ({ navigation, route }) => {
             <Validacao errors={errors.nome} touched={touched.nome} />
 
             <TextInput
-              style={{ marginTop: 10 }}
+              style={{ marginTop: 10,  }}
               mode='outlined'
               label='Duração'
               keyboardType='decimal-pad'
@@ -73,8 +73,8 @@ const CursosForm = ({ navigation, route }) => {
             />
             <Validacao errors={errors.duracao} touched={touched.duracao} />
 
-            <Picker
-              selectedValue={values.modalidade}
+            <Picker style={{ marginTop: 10,  }}
+              selectedValue={values.modalidade }
               onValueChange={handleChange('modalidade')}>
               <Picker.Item label="Modalidade" value="" />
               <Picker.Item label="Presencial" value="Presencial" />

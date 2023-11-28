@@ -59,7 +59,7 @@ const Alunos = ({navigation}) => {
       <Text style={styles.text1} variant="bodyMedium">Matricula: {item.matricula}</Text>
       <Text style={styles.text1} variant="bodyMedium">Email: {item.email}</Text>
       <Text style={styles.text1} variant="bodyMedium">Telefone: {item.telefone}</Text>
-      <Text style={styles.text1} variant="bodyMedium">Cep: {item.cep}</Text>
+      <Text style={styles.text1} variant="bodyMedium">Cep: {item.Cep}</Text>
       <Text style={styles.text1} variant="bodyMedium">Rua: {item.rua}</Text>
       <Text style={styles.text1} variant="bodyMedium">Bairro: {item.bairro}</Text>
       <Text style={styles.text1} variant="bodyMedium">Cidade: {item.cidade}</Text>
@@ -106,13 +106,13 @@ const Alunos = ({navigation}) => {
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: '#fff',
-    // padding:15,
+    
     
   },
 
   card: {
     backgroundColor: '#7BC89E',
-    marginBottom: 10
+    margin:10,
   },
   text: {
     color: '#fff',

@@ -9,7 +9,7 @@ const HomeStack = () => {
     return (
         <>
             <Stack.Navigator initialRouteName='Home'>
-                <Stack.Screen name="Home" component={Home} options={{ title: 'Home' }} />
+                <Stack.Screen name="Homepage" component={Home} options={{ title: 'Homepage' }} />
             </Stack.Navigator>
         </>
     )

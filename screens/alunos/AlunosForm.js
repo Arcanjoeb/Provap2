@@ -17,7 +17,7 @@ const AlunosForm = ({ navigation }) => {
     bairro: '',
     cidade: '',
     uf: '',
-    ibge: '',
+
   });
   const [cepEditable, setCepEditable] = useState(true);
 
@@ -145,7 +145,7 @@ const AlunosForm = ({ navigation }) => {
               label="Telefone"
               keyboardType="number-pad"
               value={values.telefone}
-              onChangeText={(value) => setFieldValue('telefone', mask(value, '(99) 99999-9999'))}
+              onChangeText={(value) => setFieldValue('telefone', mask(value, '(61) 99999-9999'))}
             />
             <Validacao errors={errors.telefone} touched={touched.telefone} />
 

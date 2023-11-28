@@ -48,6 +48,7 @@ const Professores = ({ navigation }) => {
             <Card.Content >
               <Text style={styles.text1} variant="titleLarge">{item.nome}</Text>
               <Text style={styles.text} variant="bodyMedium">CPF: {item.cpf}</Text>
+              <Text style={styles.text} variant="bodyMedium">Matricula: {item.matricula}</Text>
               <Text style={styles.text} variant="bodyMedium">Modalidade: {item.modalidade}</Text>
             </Card.Content>
             <Card.Actions >

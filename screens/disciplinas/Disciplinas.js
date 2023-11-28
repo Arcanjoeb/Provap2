@@ -94,14 +94,15 @@ const styles = StyleSheet.create({
       },
 
   scrollView: {
-    backgroundColor: '#fff',
-    padding:15,
+    backgroundColor: '#ffff',
+  
     
   },
 
   card: {
     backgroundColor: '#7BC89E',
-    marginBottom: 10,
+    margin:10,
+    marginTop:10
     
   },
   text: {
