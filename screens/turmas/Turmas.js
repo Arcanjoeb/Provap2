@@ -47,7 +47,7 @@ const Turmas = ({ navigation }) => {
           <Card key={i} mode='outlined' style={styles.card}>
             <Card.Content>
               <Text style={styles.text1} variant="titleLarge">Turma: {item.turma}</Text>
-              <Text style={styles.text}  variant="bodyMedium">Numero de alunos: {item.alunos}</Text>
+              <Text style={styles.text}  variant="bodyMedium">Numero de alunos: {item.alunos} Frequentes</Text>
               <Text style={styles.text}  variant="bodyMedium">Turno: {item.turno}</Text>
               <Text style={styles.text}  variant="bodyMedium">Modalidade: {item.modalidade}</Text>
             </Card.Content>
@@ -80,7 +80,7 @@ const Turmas = ({ navigation }) => {
 
       <FAB style={styles.fab}
         icon="plus"
-        size='medium'
+        size='small'
         onPress={() => navigation.push('Turmas-form')}
       />
 
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', 
         right: 15,
         bottom: 20 ,
-        backgroundColor: '#165411',
+        backgroundColor: '#7BC89E',
         
       },
 

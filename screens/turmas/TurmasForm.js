@@ -68,7 +68,7 @@ const TurmasForm = ({ navigation, route }) => {
             <TextInput
               style={{ marginTop: 10 }}
               mode='outlined'
-              label='Alunos'
+              label='N° Alunos'
               keyboardType='decimal-pad'
               value={values.alunos}
               onChangeText={handleChange('alunos')}

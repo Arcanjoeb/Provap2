@@ -67,7 +67,7 @@ const ProfessoresForm = ({ navigation, route }) => {
             <TextInput
               style={{ marginTop: 10 }}
               mode='outlined'
-              label='Cpf'
+              label='CPF'
               keyboardType='decimal-pad'
               value={values.cpf}
               onChangeText={(value) => {setFieldValue('cpf', mask(value, '999.999.999-99'))}}

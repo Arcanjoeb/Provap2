@@ -79,7 +79,7 @@ const Professores = ({ navigation }) => {
 
       <FAB style={styles.fab}
         icon="plus"
-        size='medium'
+        size='small'
         onPress={() => navigation.push('Professores-form')}
       />
 
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', 
         right: 15,
         bottom: 20 ,
-        backgroundColor: '#165411',
+        backgroundColor: '#7BC89E',
         
       },
 

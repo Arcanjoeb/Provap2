@@ -2,8 +2,8 @@ import * as Yup from 'yup';
 
 const professorValidator = Yup.object().shape({
     turma: Yup.string()
-        .min(5, 'Valor muito curto')
-        .max(30, 'Valor muito grande')
+        .min(2, 'Valor muito curto')
+        .max(6, 'Valor muito grande')
         .required('Turma obrigatório'),
 
     alunos: Yup.string()

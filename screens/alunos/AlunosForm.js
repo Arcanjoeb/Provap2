@@ -1,186 +1,200 @@
-import axios from 'axios'
-import { Formik } from 'formik'
-import React, { useState } from 'react'
-import { ScrollView } from 'react-native'
-import { Button, Text, TextInput } from 'react-native-paper'
-import alunosValidator from '../../validators/alunosValidator'
-import { mask } from 'remask'
-import Validacao from '../../components/Validacao'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useState, useEffect } from 'react';
+import { ScrollView, Alert } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
+import axios from 'axios';
+import { Formik } from 'formik';
+import { mask } from 'remask';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Validacao from '../../components/Validacao';
+import alunosValidator from '../../validators/alunosValidator';
+import { Picker } from '@react-native-picker/picker';
 
+const AlunosForm = ({ navigation }) => {
+  const [id, setId] = useState(-1);
+  const [dados, setDados] = useState({});
+  const [cepData, setCepData] = useState({
+    rua: '',
+    bairro: '',
+    cidade: '',
+    uf: '',
+    ibge: '',
+  });
+  const [cepEditable, setCepEditable] = useState(true);
 
-const AlunosForm = () => {
-    const [id, setId] = useState(-1);
-    const [dados, setDados] = useState({})
+  useEffect(() => {
+    const fetchStoredData = async () => {
+      try {
+        const storedFormData = await AsyncStorage.getItem('formData');
+        if (storedFormData) {
+          setDados(JSON.parse(storedFormData));
+        }
+      } catch (error) {
+        console.error('Erro ao recuperar os dados:', error);
+      }
+    };
 
-    let aluno = {
-        nome: '',
-        cpf: '',
-        matricula: '',
-        email: '',
-        telefone: '',
-        cep: '',
-        logradouro: '',
-        Bairro:'',
-        numero:'',
+    fetchStoredData();
+  }, []);
+
+  function pesquisacep(valor) {
+    var cep = valor.replace(/\D/g, '');
+
+    if (cep !== '') {
+      var validacep = /^[0-9]{8}$/;
+
+      if (validacep.test(cep)) {
+        axios
+          .get(`https://viacep.com.br/ws/${cep}/json/`)
+          .then((response) => {
+            if (!('erro' in response.data)) {
+              setCepData({
+                rua: response.data.logradouro,
+                bairro: response.data.bairro,
+                cidade: response.data.localidade,
+                uf: response.data.uf,
+              });
+              setCepEditable(false);
+            } else {
+              Alert.alert('CEP não encontrado.');
+            }
+          })
+          .catch((error) => {
+            Alert.alert('Erro ao buscar CEP.');
+          });
+      }
+    }
+  }
+
+  function salvar(dados) {
+    AsyncStorage.getItem('Aluno').then((resultado) => {
+      const Aluno = JSON.parse(resultado) || [];
+
+      if (id >= 0) {
+        Aluno.splice(id, 1, dados);
+      } else {
+        Aluno.push(dados);
       }
 
-    async function handleChange(value, field) {
-        try {
-            if (field === 'cep' && value.length === 8) {
-                const endereco = await getEndereco(value);
-                setFormValues({ ...formValues, ...endereco });
-            } else {
-                setFormValues({ ...formValues, [field]: value });
-            }
-        } catch (error) {
-            console.error('Error fetching address:', error);
-            // Handle error appropriately, e.g., show an error message to the user
-        }
-    }
+      AsyncStorage.setItem('Aluno', JSON.stringify(Aluno));
 
-    async function getEndereco(cep) {
-        try {
-            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching address:', error);
-            throw error; // Rethrow the error to be caught by the handleChange function
-        }
-    }
+      navigation.goBack();
+    });
+  }
 
-    function salvar(dados) {
-        AsyncStorage.getItem('Aluno').then(resultado => {
+  return (
+    <ScrollView style={{ margin: 15 }}>
+      <Formik
+        initialValues={dados}
+        validationSchema={alunosValidator}
+        onSubmit={(values) => salvar(values)}
+      >
+        {({ values, handleChange, handleSubmit, errors, touched, setFieldValue }) => (
+          <>
+            <TextInput
+              style={{ marginTop: 10 }}
+              mode="outlined"
+              label="Nome"
+              value={values.nome}
+              onChangeText={(valor) => setFieldValue('nome', valor)}
+            />
+            <Validacao errors={errors.nome} touched={touched.nome} />
+            
+            <Picker
+              selectedValue={values.modalidade}
+              onValueChange={handleChange('modalidade')}>
+              <Picker.Item label="Modalidade" value="" />
+              <Picker.Item label="Presencial" value="Presencial" />
+              <Picker.Item label="EAD" value="EAD" />
+              <Picker.Item label="Híbrido" value="Híbrido" />
+            </Picker>
+            <Validacao errors={errors.modalidade} touched={touched.modalidade} />
 
-            const Aluno = JSON.parse(resultado) || []
-      
-            if (id >= 0) {
-              Aluno.splice(id, 1, dados)
-            } else {
-              Aluno.push(dados)
-            }
-      
-            AsyncStorage.setItem('Aluno', JSON.stringify(Aluno))
-      
-            navigation.goBack()
-          })
-        }
+            <TextInput
+              style={{ marginTop: 10 }}
+              mode="outlined"
+              label="CPF"
+              keyboardType="decimal-pad"
+              value={values.cpf}
+              onChangeText={(value) => setFieldValue('cpf', mask(value, '999.999.999-99'))}
+            />
+            <Validacao errors={errors.cpf} touched={touched.cpf} />
 
-    return (
-        <ScrollView style={{ margin: 15 }}>
+            <TextInput
+              style={{ marginTop: 10 }}
+              mode="outlined"
+              label="Matrícula"
+              keyboardType="decimal-pad"
+              value={values.matricula}
+              onChangeText={(value) => setFieldValue('matricula', mask(value, '999999-99'))}
+            />
+            <Validacao errors={errors.matricula} touched={touched.matricula} />
+            
+            <TextInput
+              style={{ marginTop: 10 }}
+              mode="outlined"
+              label="E-mail"
+              keyboardType="email-address"
+              value={values.email}
+              onChangeText={(valor) => setFieldValue('email', valor)}
+            />
+            <Validacao errors={errors.email} touched={touched.email} />
 
-            <Formik
-                initialValues={aluno}
-                validationSchema={alunosValidator}
-                onSubmit={values => salvar(values)}
-                    >
-                    {({ values, handleChange, handleSubmit, errors, touched, setFieldValue }) => (
-                    <>
+            <TextInput
+              style={{ marginTop: 10 }}
+              mode="outlined"
+              label="Telefone"
+              keyboardType="number-pad"
+              value={values.telefone}
+              onChangeText={(value) => setFieldValue('telefone', mask(value, '(99) 99999-9999'))}
+            />
+            <Validacao errors={errors.telefone} touched={touched.telefone} />
 
-                        
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Nome'
-                            value={dados.nome}
-                            onChangeText={(valor) => handleChange(valor, 'nome')}
-                        />
-                        <Validacao errors={errors.nome} touched={touched.nome} />
+            <TextInput
+              style={{ backgroundColor: 'white' , marginTop: 10 }}
+               mode="outlined"
+              placeholder="CEP"
+              value={values.cep}
+              onChangeText={(value) => {
+                setFieldValue('cep', mask (value, '99999-999'));
+                pesquisacep(value);
+              }}
+            />
+            <TextInput
+              style={{ backgroundColor: 'white',marginTop: 10  }}
+               mode="outlined"
+              placeholder="Rua"
+              value={cepData.rua}
+              editable={cepEditable}
+            />
+            <TextInput
+              style={{ backgroundColor: 'white',marginTop: 10  }}
+               mode="outlined"
+              placeholder="Bairro"
+              value={cepData.bairro}
+              editable={cepEditable}
+            />
+            <TextInput
+              style={{ backgroundColor: 'white',marginTop: 10  }}
+               mode="outlined"
+              placeholder="Cidade"
+              value={cepData.cidade}
+              editable={cepEditable}
+            />
+            <TextInput
+              style={{ backgroundColor: 'white',marginTop: 10  }}
+               mode="outlined"
+              placeholder="UF"
+              value={cepData.uf}
+              editable={cepEditable}
+            />
 
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='CPF'
-                            keyboardType='decimal-pad'
-                            value={dados.cpf}
-                            onChangeText={(value) => {setFieldValue('cpf', mask(value,'999.999.999-99'))}}
-                        />
-                        <Validacao errors={errors.cpf} touched={touched.cpf} />
+            <Button onPress={handleSubmit}>Salvar</Button>
+          </>
+        )}
+      </Formik>
+    </ScrollView>
+  );
+};
 
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Matrícula'
-                            keyboardType='decimal-pad'
-                            value={dados.matricula}
-                            onChangeText={(value) => {setFieldValue('matricula', mask(value, '999999-99'))}}
-                        />
-                        <Validacao errors={errors.matricula} touched={touched.matricula} />
+export default AlunosForm;
 
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='E-mail'
-                            keyboardType='email-address'
-                            value={dados.email}
-                            onChangeText={(valor) => handleChange(valor, 'email')}
-                        />
-                        <Validacao errors={errors.email} touched={touched.email} />
-
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Telefone'
-                            keyboardType='number-pad'
-                            value={dados.telefone}
-                            onChangeText={(valor) => handleChange(valor, 'telefone')}
-                        />
-                        <Validacao errors={errors.telefone} touched={touched.telefone} />
-
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='CEP'
-                            value={dados.cep}
-                            keyboardType='number-pad'
-                            onChangeText={(valor) => handleChange(valor, 'cep')}
-                        />
-                        <Validacao errors={errors.cep} touched={touched.cep} />
-
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Logradouro'
-                            value={dados.logradouro}
-                            onChangeText={(valor) => handleChange(valor, 'logradouro')}
-                        />
-                        <Validacao errors={errors.logradouro} touched={touched.logradouro} />
-
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Bairro'
-                            value={dados.bairro}
-                            onChangeText={(valor) => handleChange(valor, 'bairro')}
-                        />
-                        <Validacao errors={errors.bairro} touched={touched.bairro} />
-
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Número'
-                            value={dados.numero}
-                            keyboardType='number-pad'
-                            onChangeText={(valor) => handleChange(valor, 'numero')}
-                        />
-                        <Validacao errors={errors.numero} touched={touched.numero} />
-
-                        <TextInput
-                            style={{ marginTop: 10 }}
-                            mode='outlined'
-                            label='Complemento'
-                            value={dados.complemento}
-                            onChangeText={(valor) => handleChange(valor, 'complemento')}
-                        />
-                        <Validacao errors={errors.complemento} touched={touched.complemento} />
-
-                        <Button onPress={handleSubmit}>Salvar</Button>
-                    </>
-                )}
-
-            </Formik>
-        </ScrollView>
-    )
-}
-
-export default AlunosForm

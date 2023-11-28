@@ -46,7 +46,7 @@ const Cursos = ({ navigation }) => {
           <Card key={i} mode='outlined' style={styles.card}>
             <Card.Content>
               <Text style={styles.text}variant="titleLarge">{item.nome}</Text>
-              <Text style={styles.text1} variant="bodyMedium">Duração: {item.duracao} sem.</Text>
+              <Text style={styles.text1} variant="bodyMedium">Duração: {item.duracao} Anos.</Text>
               <Text style={styles.text1} variant="bodyMedium">Modalidade: {item.modalidade}</Text>
             </Card.Content>
             <Card.Actions>
@@ -78,7 +78,7 @@ const Cursos = ({ navigation }) => {
 
       <FAB style={styles.fab}
         icon="plus"
-        size='medium'
+        size='small'
         onPress={() => navigation.push('cursos-form')}
       />
 
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', 
         right: 15,
         bottom: 20 ,
-        backgroundColor: '#165411',
+        backgroundColor: '#7BC89E',
         
       },
 
